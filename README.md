@@ -70,6 +70,8 @@ server.use((request, response, next) => {
     // use Server.send or Component.send method in order to send all the needed headers defined in the config
     request.app.send(request, response, 200, 'Some content');
 });
+
+server.run();
 ```
 
 We had created a Server instance with DemoComponent, having GET and POST methods in the example above.
@@ -87,9 +89,9 @@ import * as socketIO from 'socket.io';
 
 const config: ServerConfig = {};
 
-const server = new Server();
+const server = new Server(config);
 
-const serverInstance = server.run(config); // instance of HTTP or HTTPS node.js Server
+const serverInstance = server.run(); // instance of HTTP or HTTPS node.js Server
 
 const io = socketIO(serverInstance, {
     handlePreflightRequest: (request, response) => {
