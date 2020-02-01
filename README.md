@@ -83,8 +83,7 @@ A route path is the URI pattern (see [path-to-regex](https://github.com/lastuniv
 
 ## Usage with socket.io
 ```typescript
-import { Server } from '@inpassor/node-server';
-import { ServerConfig } from '@inpassor/node-server/lib/interfaces';
+import { Server, ServerConfig } from '@inpassor/node-server';
 import * as socketIO from 'socket.io';
 
 const config: ServerConfig = {};
@@ -115,8 +114,7 @@ We just need to pass the Server handler created via Server.getHandler()
 ### Common usage
 ```typescript
 import { HttpsFunction, https } from 'firebase-functions';
-import { Server } from '@inpassor/node-server';
-import { ServerConfig } from '@inpassor/node-server/lib/interfaces';
+import { Server, ServerConfig } from '@inpassor/node-server';
 
 const firebaseApplication = (config: ServerConfig): HttpsFunction => {
     return https.onRequest((request, response) => {
@@ -134,8 +132,7 @@ export const firebaseFunction = firebaseApplication(config);
 ### Asynchronous Server config, RuntimeOptions
 ```typescript
 import { RuntimeOptions, HttpsFunction, runWith, VALID_MEMORY_OPTIONS } from 'firebase-functions';
-import { Server } from '@inpassor/node-server';
-import { ServerConfig } from '@inpassor/node-server/lib/interfaces';
+import { Server, ServerConfig } from '@inpassor/node-server';
 
 const firebaseApplication = (
     getConfig: ServerConfig | Promise<ServerConfig>,
