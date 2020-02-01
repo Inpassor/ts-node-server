@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports = {
-    parser: '@typescript-eslint/parser',
     env: {
         node: true,
         browser: true,
@@ -12,7 +11,6 @@ module.exports = {
     ],
     parserOptions: {
         ecmaVersion: 2020,
-        project: 'tsconfig.json',
         sourceType: 'module',  // Allows for the use of imports
     },
     rules: {
@@ -24,6 +22,12 @@ module.exports = {
     overrides: [
         {
             files: ['*.ts'],
+            parser: '@typescript-eslint/parser',
+            parserOptions: {
+                ecmaVersion: 2020,
+                project: 'tsconfig.json',
+                sourceType: 'module',  // Allows for the use of imports
+            },
             extends: [
                 'eslint:recommended',
                 'plugin:@typescript-eslint/eslint-recommended',
