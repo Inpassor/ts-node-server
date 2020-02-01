@@ -6,6 +6,11 @@
 
 A simple node.js HTTP / HTTPS server written in pure node.js without Express.
 
+## Installation
+```bash
+npm install @inpassor/node-server --save
+```
+
 ## Usage
 ```typescript
 import { Server, Component } from '@inpassor/node-server';
@@ -119,7 +124,7 @@ export const firebaseFunction = firebaseApplication(config);
 
 ### Asynchronous Server config, RuntimeOptions
 ```typescript
-import { RuntimeOptions, HttpsFunction, runWith } from 'firebase-functions';
+import { RuntimeOptions, HttpsFunction, runWith, VALID_MEMORY_OPTIONS } from 'firebase-functions';
 import { Server } from '@inpassor/node-server';
 import { ServerConfig } from '@inpassor/node-server/lib/interfaces';
 
@@ -143,5 +148,8 @@ const firebaseApplication = (
 
 const config: ServerConfig = {};
 
-export const firebaseFunction = firebaseApplication(config);
+export const firebaseFunction = firebaseApplication(config, {
+    timeoutSeconds: 10,
+    memory: VALID_MEMORY_OPTIONS['256MB'],
+});
 ```
