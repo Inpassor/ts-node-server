@@ -25,10 +25,10 @@
         "lint": "eslint src/**/*.ts",
         "clean": "rimraf ./lib",
         "build": "npm run lint && npm run clean && tsc",
-        "push-tags": "git push && git push --tags",
-        "release-major": "npm version major -m \"%s\" && npm run push-tags",
-        "release-minor": "npm version minor -m \"%s\" && npm run push-tags",
-        "release-patch": "npm version patch -m \"%s\" && npm run push-tags"
+        "publish": "git push && git push --tags && npm publish",
+        "release-major": "npm version major -m \"%s\" && npm run publish",
+        "release-minor": "npm version minor -m \"%s\" && npm run publish",
+        "release-patch": "npm version patch -m \"%s\" && npm run publish"
     },
     "main": "lib/index.js",
     "dependencies": {
