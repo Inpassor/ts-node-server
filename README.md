@@ -23,6 +23,11 @@ class DemoComponent extends Component {
         console.log(this.request.params);
         this.send(200, 'This is the DemoComponent GET action');
     }
+
+    public post(): void {
+        console.log(this.request.params);
+        this.send(200, 'This is the DemoComponent POST action');
+    }
 }
 
 const config: ServerConfig = {
@@ -40,8 +45,10 @@ const config: ServerConfig = {
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Headers': 'content-type, authorization',
     },
-    sameOrigin: true, // when set to true adds headers 'Access-Control-Allow-Origin' equal to request origin header and 'Vary' equal to 'Origin' to all the server responses
-    handlers: [], // additional middleware functions (you can also call Server.use method to add middleware after Server instance created)
+    sameOrigin: true, // when set to true adds headers 'Access-Control-Allow-Origin' equal to
+        // request origin header and 'Vary' equal to 'Origin' to all the server responses
+    handlers: [], // additional middleware functions
+        // (you can also call Server.use method to add middleware after Server instance created)
     routes: [ // routes, handled by Component classes
         {
             path: 'demo/:arg?',
@@ -57,7 +64,7 @@ server.use((request, response, next) => {
     // TODO: some middleware work
 
     // call next function to pass work to next middleware
-    next();
+    // next();
 
     // or send a response to a client, otherwise, the server will hang till timeout
     // use Server.send or Component.send method in order to send all the needed headers defined in the config
