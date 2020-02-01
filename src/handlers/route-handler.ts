@@ -38,7 +38,7 @@ export const RouteHandler: RequestHandler = (request, response, next): void => {
         const routes = app.config.routes;
         for (const route of routes) {
             const matchFunction = match(route.path, { decode: decodeURIComponent });
-            const matchResult = matchFunction(request.path);
+            const matchResult = matchFunction(request.uri);
             if (matchResult) {
                 request.params = { ...matchResult.params };
                 return route;

@@ -10,8 +10,8 @@ export const StaticHandler: RequestHandler = (request, response): void => {
         return app.send(request, response, 204);
     }
     if (request.method === 'GET') {
-        let pathName = resolve(app.config.publicPath, request.path);
-        let extension = parsePath(request.path).ext;
+        let pathName = resolve(app.config.publicPath, request.uri);
+        let extension = parsePath(request.uri).ext;
         extension = extension.slice(1, extension.length);
         if (existsSync(pathName)) {
             if (statSync(pathName).isDirectory()) {
@@ -23,10 +23,10 @@ export const StaticHandler: RequestHandler = (request, response): void => {
                 response.setHeader('Content-Type', MimeTypes[extension] || 'text/plain');
                 return app.send(request, response, 200, body);
             } catch (e) {
-                return app.send(request, response, 500, `Error getting ${request.path || '/'}`);
+                return app.send(request, response, 500, `Error getting ${request.uri || '/'}`);
             }
         }
-        return app.send(request, response, 404, `Path /${request.path} not found`);
+        return app.send(request, response, 404, `Path /${request.uri} not found`);
     }
     app.send(request, response, 405);
 };

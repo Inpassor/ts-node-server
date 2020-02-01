@@ -29,7 +29,7 @@ export class Server {
     private handle(request: Request, response: Response): void {
         const parsedUrl = parse(request.url).pathname;
         request.app = response.app = this;
-        request.path = parsedUrl.slice(1, parsedUrl.length);
+        request.uri = parsedUrl.slice(1, parsedUrl.length);
         const handlers = [...this.config.handlers, RouteHandler, StaticHandler];
         let handler;
         const next = (): void => {
