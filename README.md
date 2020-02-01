@@ -21,7 +21,7 @@ import { resolve } from 'path';
 class DemoComponent extends Component {
     public get(): void {
         console.log(this.request.params);
-        this.send(200, 'This is the TestComponent GET action');
+        this.send(200, 'This is the DemoComponent GET action');
     }
 }
 
