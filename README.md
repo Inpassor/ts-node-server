@@ -13,8 +13,7 @@ npm install @inpassor/node-server --save
 
 ## Usage
 ```typescript
-import { Server, Component } from '@inpassor/node-server';
-import { ServerConfig } from '@inpassor/node-server/lib/interfaces';
+import { Server, Component, ServerConfig } from '@inpassor/node-server';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
