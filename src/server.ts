@@ -2,7 +2,7 @@ import { createServer as createHttpServer, Server as HttpServer } from 'http';
 import { createServer as createHttpsServer, Server as HttpsServer } from 'https';
 import { parse } from 'url';
 
-import { ServerConfig, RequestHandler, Request, Response } from './interfaces';
+import { ServerConfig, Handler, Request, Response } from './interfaces';
 import { RouteHandler, StaticHandler } from './handlers';
 import { Logger } from './helpers';
 
@@ -55,16 +55,14 @@ export class Server {
         ).listen(this.config.port);
     }
 
-    public getHandler(request: Request, response: Response): RequestHandler {
+    public getHandler(request: Request, response: Response): Handler {
         this.handle(request, response);
-        const handler: RequestHandler = (request, response, next): void => {
-            next();
-        };
+        const handler: Handler = (request, response, next): void => next();
         this.use(handler);
         return handler;
     }
 
-    public use(handler: RequestHandler): void {
+    public use(handler: Handler): void {
         if (!this.config.handlers.find(h => h === handler)) {
             this.config.handlers.push(handler);
         }

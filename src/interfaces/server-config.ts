@@ -1,7 +1,7 @@
 import { ServerOptions as HttpServerOptions } from 'http';
 import { ServerOptions as HttpsServerOptions } from 'https';
 
-import { RequestHandler } from './request-handler';
+import { Handler } from './handler';
 import { Route } from './route';
 
 export interface ServerConfig {
@@ -12,7 +12,7 @@ export interface ServerConfig {
     index?: string;
     headers?: { [name: string]: string };
     sameOrigin?: boolean;
-    handlers?: RequestHandler[];
+    handlers?: Handler[];
     routes?: Route[];
     // viewsPath?: string;
     // viewsExtension?: string;

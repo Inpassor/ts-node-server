@@ -1,15 +1,15 @@
 import { resolve, parse as parsePath } from 'path';
 import { existsSync, statSync, readFileSync } from 'fs';
 
-import { RequestHandler } from '../interfaces';
+import { Handler } from '../interfaces';
 import { MimeTypes } from '../helpers';
 
-export const StaticHandler: RequestHandler = (request, response): void => {
+export const StaticHandler: Handler = (request, response): void => {
     const app = request.app;
-    if (request.method === 'OPTIONS') {
+    if (request.method === 'options') {
         return app.send(request, response, 204);
     }
-    if (request.method === 'GET') {
+    if (request.method === 'get') {
         let pathName = resolve(app.config.publicPath, request.uri);
         let extension = parsePath(request.uri).ext;
         extension = extension.slice(1, extension.length);
