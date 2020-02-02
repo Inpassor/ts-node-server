@@ -26,9 +26,9 @@
         "clean": "rimraf ./lib",
         "build": "npm run lint && npm run clean && tsc",
         "push-tags": "git push && git push --tags",
-        "release-major": "npm version major -m \"%s\" && npm run push-tags",
-        "release-minor": "npm version minor -m \"%s\" && npm run push-tags",
-        "release-patch": "npm version patch -m \"%s\" && npm run push-tags"
+        "release-major": "npm version major -m \"%s\" && npm run push-tags && npm publish",
+        "release-minor": "npm version minor -m \"%s\" && npm run push-tags && npm publish",
+        "release-patch": "npm version patch -m \"%s\" && npm run push-tags && npm publish"
     },
     "main": "lib/index.js",
     "dependencies": {
