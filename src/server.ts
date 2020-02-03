@@ -28,7 +28,7 @@ export class Server {
         };
     }
 
-    private handle(request: Request, response: Response): void {
+    public handle(request: Request, response: Response): void {
         const parsedUrl = parse(request.url).pathname;
         Object.assign(request, {
             app: this,
@@ -65,13 +65,6 @@ export class Server {
             ? createHttpsServer(this.config.options, this.handle.bind(this))
             : createHttpServer(this.config.options, this.handle.bind(this))
         ).listen(this.config.port);
-    }
-
-    public getHandler(request: Request, response: Response): Handler {
-        const handler: Handler = (request, response, next): void => next();
-        this.use(handler);
-        this.handle(request, response);
-        return handler;
     }
 
     public use(handler: Handler): void {

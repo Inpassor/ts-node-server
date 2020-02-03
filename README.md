@@ -119,19 +119,16 @@ const io = socketIO(serverInstance, {
 ## Usage with Firebase Cloud functions
 
 There is no need for HTTP or HTTPS node.js Server instance, since the Firebase Cloud functions create its own server.
-We just need to pass the Server handler created via Server.getHandler()
+We just need to call Server.handle method.
 
 ### Common usage
 ```typescript
 import { HttpsFunction, https } from 'firebase-functions';
 import { Server, ServerConfig } from '@inpassor/node-server';
 
+const server = new Server(config);
 const firebaseApplication = (config: ServerConfig): HttpsFunction => {
-    return https.onRequest((request, response) => {
-        const server = new Server(config);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return server.getHandler(request as any, response as any);
-    });
+    return https.onRequest(server.handle.bind(server));
 };
 
 const config: ServerConfig = {};
@@ -154,7 +151,7 @@ const firebaseApplication = (
                 (config): void => {
                     const server = new Server(config);
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    resolve(server.getHandler(request as any, response as any));
+                    resolve(server.handle(request as any, response as any));
                 },
                 error => reject(error),
             );
