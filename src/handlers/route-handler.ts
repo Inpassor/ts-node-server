@@ -46,7 +46,7 @@ export const RouteHandler: Handler = (request, response, next): void => {
     };
     const method = request.method.toLowerCase();
     if (methods.indexOf(method) === -1) {
-        return app.send(request, response, 405);
+        return response.send(405);
     }
     const route = findRoute();
     if (route) {

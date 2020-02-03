@@ -5,19 +5,10 @@ import { Server } from './server';
 export class Component {
     constructor(public app: Server, public request: Request, public response: Response) {}
 
-    public send(status: number, body?): void {
-        this.app.send(this.request, this.response, status, body);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public render(fileName: string, params?: { [key: string]: any }): void {
-        this.app.render(this.request, this.response, fileName, params);
-    }
-
     public sendError(error): void {
         const code = Component.getCodeFromError(error);
         const body = Component.getMessageFromError(error);
-        this.send(code, body);
+        this.response.send(code, body);
     }
 
     public getCodeFromError;

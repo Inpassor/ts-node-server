@@ -32,6 +32,23 @@ export class Server {
     private handle(request: Request, response: Response): void {
         const parsedUrl = parse(request.url).pathname;
         request.app = response.app = this;
+        response.send = (status: number, body?): void => {
+            const headers = { ...this.config.headers };
+            if (this.config.sameOrigin && request.headers.origin) {
+                headers['Access-Control-Allow-Origin'] = request.headers.origin as string;
+                headers.Vary = 'Origin';
+            }
+            response.writeHead(status, headers);
+            response.end(body);
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        response.render = (fileName: string, params?: { [key: string]: any }): void => {
+            const renderer = new Renderer(this, fileName);
+            const body = renderer.render(params);
+            response.setHeader('Content-Type', renderer.mimeType);
+            response.setHeader('Content-Length', renderer.size);
+            response.send(200, body);
+        };
         request.uri = parsedUrl.slice(1, parsedUrl.length);
         const handlers = [...this.config.handlers, RouteHandler, StaticHandler];
         let handler;
@@ -69,24 +86,5 @@ export class Server {
         if (!this.config.handlers.find(h => h === handler)) {
             this.config.handlers.push(handler);
         }
-    }
-
-    public send(request: Request, response: Response, status: number, body?): void {
-        const headers = { ...this.config.headers };
-        if (this.config.sameOrigin && request.headers.origin) {
-            headers['Access-Control-Allow-Origin'] = request.headers.origin as string;
-            headers.Vary = 'Origin';
-        }
-        response.writeHead(status, headers);
-        response.end(body);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public render(request: Request, response: Response, fileName: string, params?: { [key: string]: any }): void {
-        const renderer = new Renderer(this, fileName);
-        const body = renderer.render(params);
-        response.setHeader('Content-Type', renderer.mimeType);
-        response.setHeader('Content-Length', renderer.size);
-        this.send(request, response, 200, body);
     }
 }

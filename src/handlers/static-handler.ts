@@ -7,7 +7,7 @@ export const StaticHandler: Handler = (request, response): void => {
     const app = request.app;
     const method = request.method.toLowerCase();
     if (method === 'options') {
-        return app.send(request, response, 204);
+        return response.send(204);
     }
     if (method === 'get') {
         let pathName = resolve(app.config.publicPath, request.uri);
@@ -16,12 +16,12 @@ export const StaticHandler: Handler = (request, response): void => {
                 pathName = resolve(pathName, app.config.index);
             }
             try {
-                return app.render(request, response, pathName);
+                return response.render(pathName);
             } catch (e) {
-                return app.send(request, response, 500, `Error getting ${request.uri || '/'}`);
+                return response.send(500, `Error getting ${request.uri || '/'}`);
             }
         }
-        return app.send(request, response, 404, `Path /${request.uri} not found`);
+        return response.send(404, `Path /${request.uri} not found`);
     }
-    app.send(request, response, 405);
+    response.send(405);
 };

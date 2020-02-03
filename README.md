@@ -21,14 +21,14 @@ import { render as ejsRender } from 'ejs';
 class DemoComponent extends Component {
     public get(): void {
         console.log(this.request.params);
-        this.render(resolve(__dirname, 'demo-component.ejs'), {
+        this.response.render(resolve(__dirname, 'demo-component.ejs'), {
             title: 'Demo Component',
         });
     }
 
     public post(): void {
         console.log(this.request.params);
-        this.send(200, 'This is the DemoComponent POST action');
+        this.response.send(200, 'This is the DemoComponent POST action');
     }
 }
 
@@ -77,8 +77,8 @@ server.use((request, response, next) => {
     // next();
 
     // or send a response to a client, otherwise, the server will hang till timeout
-    // use Server.send or Component.send method in order to send all the needed headers defined in the config
-    request.app.send(request, response, 200, 'Some content');
+    // use Response.send method in order to send all the needed headers defined in the config
+    response.send(request, response, 200, 'Some content');
 });
 
 server.run();
