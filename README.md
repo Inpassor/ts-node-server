@@ -16,11 +16,14 @@ npm install @inpassor/node-server --save
 import { Server, Component, ServerConfig } from '@inpassor/node-server';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { render as ejsRender } from 'ejs';
 
 class DemoComponent extends Component {
     public get(): void {
         console.log(this.request.params);
-        this.send(200, 'This is the DemoComponent GET action');
+        this.render(resolve(__dirname, 'demo-component.ejs'), {
+            title: 'Demo Component',
+        });
     }
 
     public post(): void {
@@ -39,6 +42,11 @@ const config: ServerConfig = {
     },
     publicPath: 'public', // path to public files, default: 'public'
     index: 'index.html', // index file name, default: 'index.html'
+    mimeTypes: { // additional MIME types
+         mp3: 'audio/mpeg',
+         pdf: 'application/pdf',
+         doc: 'application/msword',
+    },
     headers: { // list of headers for all the server responses, default: {}
         'Access-Control-Allow-Methods': 'OPTIONS, GET',
         'Access-Control-Allow-Credentials': 'true',
@@ -53,7 +61,10 @@ const config: ServerConfig = {
             path: 'demo/:arg?',
             component: DemoComponent,
         },
-    ]
+    ],
+    renderers: { // list of render functions
+        ejs: ejsRender,
+    },
 };
 
 const server = new Server(config);

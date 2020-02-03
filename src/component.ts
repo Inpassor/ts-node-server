@@ -1,22 +1,17 @@
-import { ComponentConfig, Request, Response } from './interfaces';
+import { Request, Response } from './interfaces';
 import { httpStatusList } from './helpers';
 import { Server } from './server';
 
 export class Component {
-    public app: Server;
-    public request: Request;
-    public response: Response;
-
-    constructor(public config: ComponentConfig) {
-        this.init();
-    }
-
-    public init(): void {
-        Object.assign(this, this.config);
-    }
+    constructor(public app: Server, public request: Request, public response: Response) {}
 
     public send(status: number, body?): void {
         this.app.send(this.request, this.response, status, body);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public render(fileName: string, params?: { [key: string]: any }): void {
+        this.app.render(this.request, this.response, fileName, params);
     }
 
     public sendError(error): void {

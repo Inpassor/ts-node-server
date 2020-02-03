@@ -4,6 +4,7 @@ import { parse } from 'url';
 
 import { ServerConfig, Handler, Request, Response } from './interfaces';
 import { RouteHandler, StaticHandler } from './handlers';
+import { Renderer } from './renderer';
 import { Logger } from './helpers';
 
 export class Server {
@@ -18,10 +19,12 @@ export class Server {
             options: {},
             publicPath: 'public',
             index: 'index.html',
+            mimeTypes: {},
             headers: {},
             sameOrigin: false,
             handlers: [],
             routes: [],
+            renderers: {},
             ...this.config,
         };
     }
@@ -56,9 +59,9 @@ export class Server {
     }
 
     public getHandler(request: Request, response: Response): Handler {
-        this.handle(request, response);
         const handler: Handler = (request, response, next): void => next();
         this.use(handler);
+        this.handle(request, response);
         return handler;
     }
 
@@ -76,5 +79,14 @@ export class Server {
         }
         response.writeHead(status, headers);
         response.end(body);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public render(request: Request, response: Response, fileName: string, params?: { [key: string]: any }): void {
+        const renderer = new Renderer(this, fileName);
+        const body = renderer.render(params);
+        response.setHeader('Content-Type', renderer.mimeType);
+        response.setHeader('Content-Length', renderer.size);
+        this.send(request, response, 200, body);
     }
 }

@@ -1,15 +1,14 @@
-export const MimeTypes: { [type: string]: string } = {
-    ico: 'image/x-icon',
+export const MimeTypes: { [extension: string]: string } = {
     html: 'text/html',
+    ejs: 'text/html',
+    txt: 'text/plain',
     js: 'text/javascript',
-    json: 'application/json',
     css: 'text/css',
+    json: 'application/json',
+    xml: 'application/xml',
+    ico: 'image/x-icon',
     png: 'image/png',
     jpg: 'image/jpeg',
     jpeg: 'image/jpeg',
-    wav: 'audio/wav',
-    mp3: 'audio/mpeg',
     svg: 'image/svg+xml',
-    pdf: 'application/pdf',
-    doc: 'application/msword',
 };

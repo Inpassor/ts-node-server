@@ -1,6 +1,6 @@
 import { match } from 'path-to-regexp';
 
-import { Route, ComponentAction, Handler } from '../interfaces';
+import { Route, Handler } from '../interfaces';
 
 const methods = [
     'get',
@@ -29,7 +29,6 @@ const methods = [
     'patch',
     'search',
     'connect',
-    'all',
 ];
 
 export const RouteHandler: Handler = (request, response, next): void => {
@@ -50,17 +49,12 @@ export const RouteHandler: Handler = (request, response, next): void => {
         return app.send(request, response, 405);
     }
     const route = findRoute();
-    if (!route) {
-        return next();
-    }
-    const component = new route.component({
-        app,
-        request,
-        response,
-    });
-    const action: ComponentAction = component[method] || component['all'];
-    if (action) {
-        return action.call(component, next);
+    if (route) {
+        const component = new route.component(app, request, response);
+        const action = component[method] || component['all'];
+        if (action) {
+            return action.call(component, next);
+        }
     }
     next();
 };
