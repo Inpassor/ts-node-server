@@ -126,8 +126,8 @@ We just need to call Server.handle method.
 import { HttpsFunction, https } from 'firebase-functions';
 import { Server, ServerConfig } from '@inpassor/node-server';
 
-const server = new Server(config);
 const firebaseApplication = (config: ServerConfig): HttpsFunction => {
+    const server = new Server(config);
     return https.onRequest(server.handle.bind(server));
 };
 
@@ -150,8 +150,7 @@ const firebaseApplication = (
             Promise.resolve(getConfig).then(
                 (config): void => {
                     const server = new Server(config);
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    resolve(server.handle(request as any, response as any));
+                    resolve(server.handle.call(server, request, response));
                 },
                 error => reject(error),
             );
