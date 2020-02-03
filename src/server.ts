@@ -2,11 +2,9 @@ import { createServer as createHttpServer, Server as HttpServer } from 'http';
 import { createServer as createHttpsServer, Server as HttpsServer } from 'https';
 import { parse } from 'url';
 
-import { ServerConfig, Handler } from './interfaces';
+import { ServerConfig, Handler, Request, Response } from './interfaces';
 import { RouteHandler, StaticHandler } from './handlers';
-import { Request } from './request';
-import { Response } from './response';
-import { Logger } from './helpers';
+import { ResponseMixin, Logger } from './helpers';
 
 export class Server {
     constructor(public config: ServerConfig = {}) {
@@ -32,14 +30,18 @@ export class Server {
 
     private handle(request: Request, response: Response): void {
         const parsedUrl = parse(request.url).pathname;
-        request.init({
+        Object.assign(request, {
             app: this,
             uri: parsedUrl.slice(1, parsedUrl.length),
         });
-        response.init({
-            app: this,
-            request,
-        });
+        Object.assign(
+            response,
+            {
+                app: this,
+                request,
+            },
+            ResponseMixin,
+        );
         const handlers = [...this.config.handlers, RouteHandler, StaticHandler];
         let handler;
         const next = (): void => {

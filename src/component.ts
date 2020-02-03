@@ -1,5 +1,4 @@
-import { Request } from './request';
-import { Response } from './response';
+import { Request, Response } from './interfaces';
 import { Server } from './server';
 
 export class Component {
