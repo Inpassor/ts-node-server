@@ -1,6 +1,6 @@
 {
     "name": "@inpassor/node-server",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "license": "MIT",
     "author": "Oleg V. Kuzmin",
     "description": "Simple node.js HTTP / HTTPS server",
