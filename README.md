@@ -78,7 +78,7 @@ server.use((request, response, next) => {
 
     // or send a response to a client, otherwise, the server will hang till timeout
     // use Response.send method in order to send all the needed headers defined in the config
-    response.send(request, response, 200, 'Some content');
+    response.send(200, 'Some content');
 });
 
 server.run();
