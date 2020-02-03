@@ -2,9 +2,10 @@ import { createServer as createHttpServer, Server as HttpServer } from 'http';
 import { createServer as createHttpsServer, Server as HttpsServer } from 'https';
 import { parse } from 'url';
 
-import { ServerConfig, Handler, Request, Response } from './interfaces';
+import { ServerConfig, Handler } from './interfaces';
 import { RouteHandler, StaticHandler } from './handlers';
-import { Renderer } from './renderer';
+import { Request } from './request';
+import { Response } from './response';
 import { Logger } from './helpers';
 
 export class Server {
@@ -31,25 +32,14 @@ export class Server {
 
     private handle(request: Request, response: Response): void {
         const parsedUrl = parse(request.url).pathname;
-        request.app = response.app = this;
-        response.send = (status: number, body?): void => {
-            const headers = { ...this.config.headers };
-            if (this.config.sameOrigin && request.headers.origin) {
-                headers['Access-Control-Allow-Origin'] = request.headers.origin as string;
-                headers.Vary = 'Origin';
-            }
-            response.writeHead(status, headers);
-            response.end(body);
-        };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        response.render = (fileName: string, params?: { [key: string]: any }): void => {
-            const renderer = new Renderer(this, fileName);
-            const body = renderer.render(params);
-            response.setHeader('Content-Type', renderer.mimeType);
-            response.setHeader('Content-Length', renderer.size);
-            response.send(200, body);
-        };
-        request.uri = parsedUrl.slice(1, parsedUrl.length);
+        request.init({
+            app: this,
+            uri: parsedUrl.slice(1, parsedUrl.length),
+        });
+        response.init({
+            app: this,
+            request,
+        });
         const handlers = [...this.config.handlers, RouteHandler, StaticHandler];
         let handler;
         const next = (): void => {
