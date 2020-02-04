@@ -89,7 +89,7 @@ The route **/demo[/arg]** will be served by DemoComponent.
 
 All the other routes will be served under **publicPath** directory.
 
-A route path is the URI pattern (see [path-to-regex](https://github.com/lastuniverse/path-to-regex#readme) documentation).
+A route path is the URI pattern (see [path-to-regexp](https://github.com/pillarjs/path-to-regexp) documentation).
 
 ## Usage with socket.io
 ```typescript
