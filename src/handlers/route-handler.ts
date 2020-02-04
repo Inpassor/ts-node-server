@@ -36,12 +36,14 @@ export const RouteHandler: Handler = (request, response, next): void => {
     const findRoute = (): Route => {
         const routes = app.config.routes;
         for (const route of routes) {
-            const matchFunction = match(route.path, { decode: decodeURIComponent });
-            const matchResult = matchFunction(request.uri);
-            if (matchResult) {
-                request.params = { ...matchResult.params };
-                return route;
-            }
+            try {
+                const matchFunction = match(route.path, { encode: encodeURI, decode: decodeURIComponent });
+                const matchResult = matchFunction(request.uri);
+                if (matchResult) {
+                    request.params = { ...matchResult.params };
+                    return route;
+                }
+            } catch (e) {}
         }
     };
     const method = request.method.toLowerCase();
