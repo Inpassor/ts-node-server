@@ -31,7 +31,7 @@ const methods = [
     'connect',
 ];
 
-export const RouteHandler: Handler = (request, response, next): void => {
+export const routeHandler: Handler = (request, response, next): void => {
     const app = request.app;
     const findRoute = (): Route => {
         const routes = app.config.routes;
@@ -55,7 +55,12 @@ export const RouteHandler: Handler = (request, response, next): void => {
         const component = new route.component(app, request, response);
         const action = component[method] || component['all'];
         if (action) {
-            return action.call(component, next);
+            if (route.headers) {
+                for (const name in route.headers) {
+                    response.setHeader(name, route.headers[name]);
+                }
+            }
+            return action.call(component);
         }
     }
     next();

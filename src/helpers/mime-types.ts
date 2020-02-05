@@ -1,4 +1,4 @@
-export const MimeTypes: { [extension: string]: string } = {
+export const mimeTypes: { [extension: string]: string } = {
     html: 'text/html',
     ejs: 'text/html',
     txt: 'text/plain',

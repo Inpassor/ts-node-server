@@ -3,7 +3,7 @@ import { createServer as createHttpsServer, Server as HttpsServer } from 'https'
 import { parse } from 'url';
 
 import { ServerConfig, Handler, Request, Response } from './interfaces';
-import { RouteHandler, StaticHandler } from './handlers';
+import { routeHandler, staticHandler } from './handlers';
 import { ResponseMixin, Logger } from './helpers';
 
 export class Server {
@@ -42,7 +42,7 @@ export class Server {
             },
             ResponseMixin,
         );
-        const handlers = [...this.config.handlers, RouteHandler, StaticHandler];
+        const handlers = [...this.config.handlers, routeHandler, staticHandler];
         let handler;
         const next = (): void => {
             handler = handlers.shift();

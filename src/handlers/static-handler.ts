@@ -3,7 +3,7 @@ import { existsSync, statSync } from 'fs';
 
 import { Handler } from '../interfaces';
 
-export const StaticHandler: Handler = (request, response): void => {
+export const staticHandler: Handler = (request, response): void => {
     const app = request.app;
     const method = request.method.toLowerCase();
     if (method === 'options') {
@@ -16,7 +16,7 @@ export const StaticHandler: Handler = (request, response): void => {
                 pathName = resolve(pathName, app.config.index);
             }
             try {
-                return response.render(pathName);
+                return response.renderFile(pathName);
             } catch (e) {
                 return response.send(500, `Error getting ${request.uri || '/'}`);
             }
