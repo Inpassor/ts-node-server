@@ -1,10 +1,26 @@
 # Simple node.js HTTP / HTTPS server
 
-![](https://img.shields.io/npm/v/@inpassor/node-server.svg?style=flat)
-![](https://img.shields.io/github/license/Inpassor/ts-node-server.svg?style=flat-square)
+[![](https://img.shields.io/npm/v/@inpassor/node-server.svg?style=flat)](https://www.npmjs.com/package/@inpassor/node-server)
+[![](https://img.shields.io/github/license/Inpassor/ts-node-server.svg?style=flat-square)](https://github.com/Inpassor/ts-node-server/blob/master/LICENSE)
 ![](https://img.shields.io/npm/dt/@inpassor/node-server.svg?style=flat-square)
 
-A simple node.js HTTP / HTTPS server written in pure node.js without Express.
+A simple HTTP / HTTPS server written in pure node.js without Express.
+
+This library is designed to be minimalistic, quick and powerful at once.
+It includes two built-in middleware functions: **routeHandler** and **staticHandler**.
+They act one after another. First, routeHandler, then staticHandler.
+You can implement any number of middleware functions. They will be served first.
+
+**routeHandler** serves routes and runs user-implemented Components.
+You can implement any REST method within Component.
+A route can be string, Regex or array of string / Regex (see [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match) Match documentation).
+If URI does not match any route the Server runs **staticHandler**.
+
+**staticHandler** serves static files under a public directory.
+It looks for directories/files by URI. If URI matches an existing directory,
+**staticHandler** looks for an index file within it.
+The library determines a few MIME types by a file extension.
+You can define additional MIME types in the **Server** config.
 
 ## Installation
 ```bash
@@ -12,6 +28,205 @@ npm install @inpassor/node-server --save
 ```
 
 ## Usage
+
+### Server [class]
+```constructor(config?: ServerConfig)```
+
+Creates a **Server** instance with a given config.
+If config is omitted default options are used.
+
+**ServerConfig** is an object with any set of these options:
+
+- ```protocol: 'http' | 'https'``` (default: **'http'**) - a protocol to be used by a server.
+    Depending on it a corresponding server instance will be created: **HttpServer** or **HttpsServer**.
+- ```port: number``` (default: **80**) - a port to be used by a server.
+- ```options: HttpServerOptions | HttpsServerOptions``` (default: **{}**) - options to pass to **createServer** function.
+- ```publicPath: string``` (default: **'public'**) - a directory to be served by **staticHandler**.
+- ```index: string``` (default: **'index.html'**) - an index file name to be served by
+    **staticHandler**. If URI matches an existing directory
+    under **publicPath** directory, **staticHandler** is looking for this file
+    within this directory and renders it by a corresponding renderer. A renderer is determined
+    by an index file extension.
+- ```mimeTypes: { [extension: string]: string }``` (default: **{}**) - additional MIME types by extension. For example:
+    ```
+    {
+        mp3: 'audio/mpeg',
+        pdf: 'application/pdf',
+        doc: 'application/msword',
+    }
+    ```
+- ```headers: { [name: string]: string }``` (default: **{}**) - list of headers for all the server responses. For example:
+    ```
+    {
+        'Access-Control-Allow-Methods': 'OPTIONS, GET',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Headers': 'content-type, authorization',
+    }
+    ```
+- ```sameOrigin: boolean``` (default: **false**) - when set to true adds headers
+    **Access-Control-Allow-Origin** equal to request **Origin** header
+    and **Vary** equal to 'Origin' to all the server responses.
+    If a request does not contain **Origin** header, headers **Access-Control-Allow-Origin** and **Vary**
+    are not added.
+- ```handlers: Handler[]``` (default: **[]**) - additional middleware functions.
+
+    **Handler** is a function ```(request: Request, response: Response, next: () => void): void```.
+
+    It accepts three arguments:
+    - ```request: Request``` - **Request** instance.
+    - ```response: Response``` - **Response** instance.
+    - ```next: () => void``` - a function that passes control to a next middleware function if is called
+        inside a handler function.
+
+    You can also call **Server.use** method to add middleware after **Server** instance created.
+- ```routes: Route[]``` (default: **[]**) - routes to be served by **routeHandler**.
+
+    **Route** is an object:
+    ```
+    {
+        path: string | RegExp | (string | RegExp)[];
+        component: typeof Component;
+        headers?: { [name: string]: string };
+    }
+    ```
+
+    - ```path: string``` - can be string, Regex or array of string / Regex (see [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match) Match documentation).
+    - ```component: typeof Component``` - a derivative class of **Component**.
+    - ```headers: { [name: string]: string }``` (default: **{}**) - additional headers for this route.
+- ```renderers: { [extension: string]: RenderFunction }``` (default: **{}**) - list of
+    render functions by extension. For example:
+    ```
+    {
+        ejs: ejsRender, // don't forget to import { render as ejsRender } from 'ejs';
+    }
+    ```
+
+    **RenderFunction** is a function ```(template: string, params?: { [key: string]: any }): string```.
+
+    It accepts one or two arguments:
+    - ```template: string``` - a template string.
+    - ```params: { [key: string]: any }``` (default: **undefined**) - an object containing data to be used by the render function.
+
+    Returns string - a result of render function to be sent to a client.
+
+#### Server.run [method]
+```run: () => HttpServer | HttpsServer```
+
+Runs an HttpServer | HttpsServer and returns its instance.
+
+#### Server.handle [method]
+```handle: (request: Request, response: Response) => void```
+
+A Server handler. Called by **Server.run** method automatically.
+It can be used by an external server (for example, Firebase Cloud functions).
+
+#### Server.use [method]
+```use: (handler: Handler) => void```
+
+Adds a middleware to a **Server** instance.
+
+### Component [class]
+
+All the user-implemented Component classes for **routeHandler** should be derivative of **Component** class.
+
+You can implement any REST method within a Component class. All you need to do is
+create a method of a class with a name coinciding with a request method name (in lower case).
+
+For example, this is DemoComponent implementing GET and POST methods:
+```typescript
+class DemoComponent extends Component {
+    public get(): void {
+        this.response.render(resolve(__dirname, 'demo-component.ejs'), {
+            title: 'Demo Component',
+        });
+    }
+
+    public post(): void {
+        this.response.send(200, 'This is the DemoComponent POST action');
+    }
+}
+```
+
+#### Component.app [property]
+```app: Server```
+
+#### Component.request [property]
+```request: Request```
+
+#### Component.response [property]
+```response: Response```
+
+### Request [class]
+
+A derivative class of **IncomingMessage**. Has a few additional properties:
+
+#### Request.app [property]
+```app: Server```
+
+#### Request.uri [property]
+```uri: string``` - current route URI.
+
+#### Request.params [property]
+```params: { [name: string]: string }```
+
+A route parameters list parsed by [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match)
+Match function.
+
+### Response [class]
+
+A derivative class of **ServerResponse**. Has a few additional properties and methods:
+
+#### Response.app [property]
+```app: Server```
+
+#### Response.request [property]
+```request: Request```
+
+#### Response.send [method]
+```send: (status: number, body?) => void```
+
+#### Response.sendJSON [method]
+```sendJSON: (data: { [key: string]: any }) => void```
+
+#### Response.sendError [method]
+```sendError: (error) => void```
+
+#### Response.render [method]
+```render: (template: string, extension: string, params?: { [key: string]: any }) => void```
+
+#### Response.renderFile [method]
+```renderFile: (fileName: string, params?: { [key: string]: any }) => void```
+
+### Helpers
+
+The library has a few helper functions:
+
+#### getCodeFromError [function]
+```getCodeFromError: (error) => number```
+
+#### getMessageFromError [function]
+```getMessageFromError: (error) => string```
+
+#### httpStatusList [object]
+```httpStatusList: { [code: number]: string }```
+
+#### mimeTypes [object]
+```mimeTypes: { [extension: string]: string }```
+
+#### isHttpServerOptions [type guard]
+```isHttpServerOptions: (arg) => arg is ServerOptions```
+
+#### isHttpsServerOptions [type guard]
+```isHttpsServerOptions: (arg) => arg is ServerOptions```
+
+#### isServerConfig [type guard]
+```isServerConfig: (arg) => arg is ServerConfig```
+
+#### Logger [class]
+
+## Examples
+
+### Stand-alone
 ```typescript
 import { Server, Component, ServerConfig } from '@inpassor/node-server';
 import { readFileSync } from 'fs';
@@ -43,9 +258,9 @@ const config: ServerConfig = {
     publicPath: 'public', // path to public files, default: 'public'
     index: 'index.html', // index file name, default: 'index.html'
     mimeTypes: { // additional MIME types
-         mp3: 'audio/mpeg',
-         pdf: 'application/pdf',
-         doc: 'application/msword',
+        mp3: 'audio/mpeg',
+        pdf: 'application/pdf',
+        doc: 'application/msword',
     },
     headers: { // list of headers for all the server responses, default: {}
         'Access-Control-Allow-Methods': 'OPTIONS, GET',
@@ -53,10 +268,10 @@ const config: ServerConfig = {
         'Access-Control-Allow-Headers': 'content-type, authorization',
     },
     sameOrigin: true, // when set to true adds headers 'Access-Control-Allow-Origin' equal to
-        // request origin header and 'Vary' equal to 'Origin' to all the server responses
+        // request Origin header and 'Vary' equal to 'Origin' to all the server responses
     handlers: [], // additional middleware functions
         // (you can also call Server.use method to add middleware after Server instance created)
-    routes: [ // routes, handled by Component classes
+    routes: [ // routes to be served by routeHandler
         {
             path: 'demo/:arg?',
             component: DemoComponent,
@@ -84,19 +299,18 @@ server.use((request, response, next) => {
 server.run();
 ```
 
-We had created a Server instance with DemoComponent, having GET and POST methods in the example above.
+We had created a Server instance with ejs renderer and DemoComponent,
+having GET and POST methods in the example above.
 The route **/demo[/arg]** will be served by DemoComponent.
 
 All the other routes will be served under **publicPath** directory.
 
-A route path is the URI pattern (see [path-to-regexp](https://github.com/pillarjs/path-to-regexp) documentation).
-
-## Usage with socket.io
+### socket.io
 ```typescript
 import { Server, ServerConfig } from '@inpassor/node-server';
 import * as socketIO from 'socket.io';
 
-const config: ServerConfig = {};
+const config: ServerConfig = {}; // define your own ServerConfig here
 
 const server = new Server(config);
 
@@ -116,29 +330,32 @@ const io = socketIO(serverInstance, {
 });
 ```
 
-## Usage with Firebase Cloud functions
+### Firebase Cloud functions
 
-There is no need for HTTP or HTTPS node.js Server instance, since the Firebase Cloud functions create its own server.
-We just need to call Server.handle method.
+There is no need for HTTP or HTTPS node.js server instance since Firebase Cloud functions create its own server.
+We just need to pass **Server.handle** method to Firebase.
 
-### Common usage
+#### Common usage
 ```typescript
-import { HttpsFunction, https } from 'firebase-functions';
+import { RuntimeOptions, HttpsFunction, runWith } from 'firebase-functions';
 import { Server, ServerConfig } from '@inpassor/node-server';
 
-const firebaseApplication = (config: ServerConfig): HttpsFunction => {
+const firebaseApplication = (config: ServerConfig, runtimeOptions?: RuntimeOptions): HttpsFunction => {
     const server = new Server(config);
-    return https.onRequest(server.handle.bind(server));
+    return runWith(runtimeOptions).https.onRequest(server.handle.bind(server));
 };
 
-const config: ServerConfig = {};
+const config: ServerConfig = {}; // define your own ServerConfig here
 
-export const firebaseFunction = firebaseApplication(config);
+export const firebaseFunction = firebaseApplication(config, {
+  timeoutSeconds: 10,
+  memory: '128MB',
+});
 ```
 
-### Asynchronous Server config, RuntimeOptions
+#### Asynchronous Server config
 ```typescript
-import { RuntimeOptions, HttpsFunction, runWith, VALID_MEMORY_OPTIONS } from 'firebase-functions';
+import { RuntimeOptions, HttpsFunction, runWith } from 'firebase-functions';
 import { Server, ServerConfig } from '@inpassor/node-server';
 
 const firebaseApplication = (
@@ -158,10 +375,17 @@ const firebaseApplication = (
     });
 };
 
-const config: ServerConfig = {};
+// Some asynchronous get config function
+const getConfig = (): Promise<ServerConfig> => {
+    const config: ServerConfig = {}; // define your own ServerConfig here
+    return Promise.resolve(config);
+};
 
-export const firebaseFunction = firebaseApplication(config, {
+export const firebaseFunction = firebaseApplication(getConfig(), {
     timeoutSeconds: 10,
-    memory: VALID_MEMORY_OPTIONS['256MB'],
+    memory: '128MB',
 });
 ```
+
+You can also use the library [@inpassor/firebase-application](https://github.com/Inpassor/ts-firebase-application)
+which wraps node-server.
