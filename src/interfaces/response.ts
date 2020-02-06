@@ -8,10 +8,10 @@ export interface Response extends ServerResponse {
     request: Request;
     send: (status: number, body?) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    sendJSON: (data: { [key: string]: any }) => void;
+    sendJSON: (data: any) => void;
     sendError: (error) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    render: (template: string, extension: string, params?: { [key: string]: any }) => void;
+    render: (template: string | Buffer, extension: string, params?: { [key: string]: any }) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    renderFile: (fileName: string, params?: { [key: string]: any }) => void;
+    renderFile: (pathSegments: string | string[], params?: { [key: string]: any }) => void;
 }

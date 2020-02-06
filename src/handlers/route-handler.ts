@@ -43,7 +43,7 @@ export const routeHandler: Handler = (request, response, next): void => {
                     request.params = { ...matchResult.params };
                     return route;
                 }
-            } catch (e) {}
+            } catch {}
         }
     };
     const method = request.method.toLowerCase();

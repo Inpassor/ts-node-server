@@ -4,7 +4,7 @@ export const getMessageFromError = (error): string => {
     if (typeof error === 'string') {
         return error;
     }
-    let message = 'An unexpected error occurred';
+    let message = 'An unexpected error has occurred';
     const e = error.error || error;
     if (e) {
         if (e.message) {
