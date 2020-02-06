@@ -6,4 +6,5 @@ export * from './is-https-server-options';
 export * from './is-server-config';
 export * from './logger';
 export * from './mime-types';
+export * from './resolve-path';
 export * from './response-mixin';
