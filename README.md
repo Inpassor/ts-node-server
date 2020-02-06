@@ -13,7 +13,7 @@ You can implement any number of middleware functions. They will be served first.
 
 **routeHandler** serves routes and runs user-implemented Components.
 You can implement any REST method within Component.
-A route can be string, Regex or array of string / Regex (see [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match) Match documentation).
+Routes are defined in the **Server** config.
 If URI does not match any route the Server runs **staticHandler**.
 
 **staticHandler** serves static files under a public directory.
@@ -38,16 +38,20 @@ If config is omitted default options are used.
 **ServerConfig** is an object with any set of these options:
 
 - ```protocol: 'http' | 'https'``` (default: **'http'**) - a protocol to be used by a server.
-    Depending on it a corresponding server instance will be created: **HttpServer** or **HttpsServer**.
+    Depending on it a corresponding server instance will be created:
+    **HttpServer** or **HttpsServer**.
 - ```port: number``` (default: **80**) - a port to be used by a server.
-- ```options: HttpServerOptions | HttpsServerOptions``` (default: **{}**) - options to pass to **createServer** function.
-- ```publicPath: string``` (default: **'public'**) - a directory to be served by **staticHandler**.
+- ```options: HttpServerOptions | HttpsServerOptions``` (default: **{}**) - options to pass
+    to **createServer** function.
+- ```publicPath: string | string[]``` (default: **'public'**) - a directory to be served by
+    **staticHandler**. Automatically resolves by **path.resolve** function.
 - ```index: string``` (default: **'index.html'**) - an index file name to be served by
     **staticHandler**. If URI matches an existing directory
     under **publicPath** directory, **staticHandler** is looking for this file
-    within this directory and renders it by a corresponding renderer. A renderer is determined
-    by an index file extension.
-- ```mimeTypes: { [extension: string]: string }``` (default: **{}**) - additional MIME types by extension. For example:
+    within this directory and renders it by a corresponding renderer.
+    A renderer is determined by an index file extension.
+- ```mimeTypes: { [extension: string]: string }``` (default: **{}**) - additional
+    MIME types by extension. For example:
     ```
     {
         mp3: 'audio/mpeg',
@@ -55,10 +59,11 @@ If config is omitted default options are used.
         doc: 'application/msword',
     }
     ```
-- ```headers: { [name: string]: string }``` (default: **{}**) - list of headers for all the server responses. For example:
+- ```headers: { [name: string]: string }``` (default: **{}**) - list of headers for
+    all the server responses. For example:
     ```
     {
-        'Access-Control-Allow-Methods': 'OPTIONS, GET',
+        'Access-Control-Allow-Methods': 'OPTIONS, GET, POST',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Headers': 'content-type, authorization',
     }
@@ -66,19 +71,21 @@ If config is omitted default options are used.
 - ```sameOrigin: boolean``` (default: **false**) - when set to true adds headers
     **Access-Control-Allow-Origin** equal to request **Origin** header
     and **Vary** equal to 'Origin' to all the server responses.
-    If a request does not contain **Origin** header, headers **Access-Control-Allow-Origin** and **Vary**
-    are not added.
+    If a request does not contain **Origin** header, headers **Access-Control-Allow-Origin**
+    and **Vary** are not added.
 - ```handlers: Handler[]``` (default: **[]**) - additional middleware functions.
 
-    **Handler** is a function ```(request: Request, response: Response, next: () => void): void```.
+    **Handler** is a function
+    ```(request: Request, response: Response, next: () => void): void```.
 
     It accepts three arguments:
     - ```request: Request``` - **Request** instance.
     - ```response: Response``` - **Response** instance.
-    - ```next: () => void``` - a function that passes control to a next middleware function if is called
-        inside a handler function.
+    - ```next: () => void``` - A function that passes control to a next middleware function
+        if is called inside a handler function.
 
-    You can also call **Server.use** method to add middleware after **Server** instance created.
+    You can also call **Server.use** method to add middleware after **Server** instance
+    created.
 - ```routes: Route[]``` (default: **[]**) - routes to be served by **routeHandler**.
 
     **Route** is an object:
@@ -90,9 +97,16 @@ If config is omitted default options are used.
     }
     ```
 
-    - ```path: string``` - can be string, Regex or array of string / Regex (see [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match) Match documentation).
-    - ```component: typeof Component``` - a derivative class of **Component**.
-    - ```headers: { [name: string]: string }``` (default: **{}**) - additional headers for this route.
+    - ```path: string | RegExp | (string | RegExp)[]``` - can be string, Regex
+        or array of string / Regex (see
+        [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match)
+        Match documentation).
+
+        You can use "magic" path: **'\*'**, which matches any route.
+        A **Route** with this path should be defined after all the routes.
+    - ```component: typeof Component``` - A derivative class of **Component**.
+    - ```headers: { [name: string]: string }``` (default: **{}**) - Additional headers
+        for this route.
 - ```renderers: { [extension: string]: RenderFunction }``` (default: **{}**) - list of
     render functions by extension. For example:
     ```
@@ -101,11 +115,13 @@ If config is omitted default options are used.
     }
     ```
 
-    **RenderFunction** is a function ```(template: string, params?: { [key: string]: any }): string```.
+    **RenderFunction** is a function
+    ```(template: string, params?: { [key: string]: any }): string```.
 
     It accepts one or two arguments:
-    - ```template: string``` - a template string.
-    - ```params: { [key: string]: any }``` (default: **undefined**) - an object containing data to be used by the render function.
+    - ```template: string``` - A template string.
+    - ```params: { [key: string]: any }``` (default: **undefined**) - An object containing
+        data to be used by a render function.
 
     Returns string - a result of render function to be sent to a client.
 
@@ -127,16 +143,18 @@ Adds a middleware to a **Server** instance.
 
 ### Component [class]
 
-All the user-implemented Component classes for **routeHandler** should be derivative of **Component** class.
+All the user-implemented Component classes for **routeHandler** should be derivative of
+**Component** class.
 
 You can implement any REST method within a Component class. All you need to do is
 create a method of a class with a name coinciding with a request method name (in lower case).
+Create **all** method to serve all the request methods.
 
 For example, this is DemoComponent implementing GET and POST methods:
 ```typescript
 class DemoComponent extends Component {
     public get(): void {
-        this.response.render(resolve(__dirname, 'demo-component.ejs'), {
+        this.response.renderFile([__dirname, 'demo-component.ejs'], {
             title: 'Demo Component',
         });
     }
@@ -164,12 +182,15 @@ A derivative class of **IncomingMessage**. Has a few additional properties:
 ```app: Server```
 
 #### Request.uri [property]
-```uri: string``` - current route URI.
+```uri: string```
+
+Current route URI.
 
 #### Request.params [property]
 ```params: { [name: string]: string }```
 
-A route parameters list parsed by [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match)
+A route parameters list parsed by
+[path-to-regexp](https://github.com/pillarjs/path-to-regexp#match)
 Match function.
 
 ### Response [class]
@@ -185,17 +206,60 @@ A derivative class of **ServerResponse**. Has a few additional properties and me
 #### Response.send [method]
 ```send: (status: number, body?) => void```
 
+Sends a response to a client.
+
+Accepts one or two arguments:
+- ```status: number``` - HTTP status code.
+- ```body: any``` (default: **undefined**) - A body of response.
+
 #### Response.sendJSON [method]
-```sendJSON: (data: { [key: string]: any }) => void```
+```sendJSON: (data: any) => void```
+
+Sends a response to a client in JSON format.
+
+Accepts one argument:
+- ```data: any``` - A data to be sent in JSON format in a body of response.
 
 #### Response.sendError [method]
 ```sendError: (error) => void```
 
+Sends an error response to a client.
+
+Accepts one argument:
+- ```error: any``` - Error object. The library tries to get HTTP status code
+    and error message automatically. Basically, error object should be as follows:
+    ```
+    {
+        code: number;
+        message: string;
+    }
+    ```
+
 #### Response.render [method]
-```render: (template: string, extension: string, params?: { [key: string]: any }) => void```
+```render: (template: string | Buffer, extension: string, params?: { [key: string]: any }) => void```
+
+Renders a **template** by a renderer, determined by **extension**, and responds to a client
+with a body, containing a result of a render function.
+
+Accepts two or three arguments:
+- ```template: string | Buffer``` - A template **string** or **Buffer**.
+    If a template is of **Buffer** type, it's converted to **string**.
+- ```extension: string``` - A renderer will be determined by this **extension**.
+    For example, **'ejs'** will be rendered by EJS renderer.
+- ```params: { [key: string]: any })``` (default: **undefined**) - An object containing
+    data to be used by a render function.
 
 #### Response.renderFile [method]
-```renderFile: (fileName: string, params?: { [key: string]: any }) => void```
+```renderFile: (pathSegments: string | string[], params?: { [key: string]: any }) => void```
+
+Renders a file by a renderer, determined by a file extension, and responds to a client
+with a body, containing a result of a render function.
+
+Accepts one or two arguments:
+- ```pathSegments: string | string[]``` - A file name to be rendered.
+    Automatically resolves by **path.resolve** function.
+- ```params: { [key: string]: any })``` (default: **undefined**) - An object containing
+    data to be used by a render function.
 
 ### Helpers
 
@@ -206,6 +270,9 @@ The library has a few helper functions:
 
 #### getMessageFromError [function]
 ```getMessageFromError: (error) => string```
+
+#### resolvePath [function]
+```resolvePath: (...pathSegments) => string```
 
 #### httpStatusList [object]
 ```httpStatusList: { [code: number]: string }```
@@ -233,10 +300,18 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { render as ejsRender } from 'ejs';
 
+class ErrorComponent extends Component {
+    public all(): void {
+        this.response.sendError({
+            code: 405,
+        });
+    }
+}
+
 class DemoComponent extends Component {
     public get(): void {
         console.log(this.request.params);
-        this.response.render(resolve(__dirname, 'demo-component.ejs'), {
+        this.response.renderFile([__dirname, 'demo-component.ejs'], {
             title: 'Demo Component',
         });
     }
@@ -263,7 +338,7 @@ const config: ServerConfig = {
         doc: 'application/msword',
     },
     headers: { // list of headers for all the server responses, default: {}
-        'Access-Control-Allow-Methods': 'OPTIONS, GET',
+        'Access-Control-Allow-Methods': 'OPTIONS, GET, POST',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Headers': 'content-type, authorization',
     },
@@ -275,6 +350,10 @@ const config: ServerConfig = {
         {
             path: 'demo/:arg?',
             component: DemoComponent,
+        },
+        {
+            path: '*',
+            component: ErrorComponent,
         },
     ],
     renderers: { // list of render functions
@@ -299,11 +378,15 @@ server.use((request, response, next) => {
 server.run();
 ```
 
-We had created a Server instance with ejs renderer and DemoComponent,
-having GET and POST methods in the example above.
+We had created a Server instance with ejs renderer and two components:
+DemoComponent, having GET and POST methods,
+and ErrorComponent, serving all the routes (which did not match any previous route)
+and all the request methods.
+
 The route **/demo[/arg]** will be served by DemoComponent.
 
-All the other routes will be served under **publicPath** directory.
+All the other routes will be served first under **publicPath** directory, then
+ErrorComponent will act.
 
 ### socket.io
 ```typescript
@@ -332,8 +415,8 @@ const io = socketIO(serverInstance, {
 
 ### Firebase Cloud functions
 
-There is no need for HTTP or HTTPS node.js server instance since Firebase Cloud functions create its own server.
-We just need to pass **Server.handle** method to Firebase.
+There is no need for HTTP or HTTPS node.js server instance since Firebase Cloud functions
+create its own server. We just need to pass **Server.handle** method to Firebase.
 
 #### Common usage
 ```typescript
@@ -387,5 +470,6 @@ export const firebaseFunction = firebaseApplication(getConfig(), {
 });
 ```
 
-You can also use the library [@inpassor/firebase-application](https://github.com/Inpassor/ts-firebase-application)
+You can also use the library
+[@inpassor/firebase-application](https://github.com/Inpassor/ts-firebase-application)
 which wraps node-server.
