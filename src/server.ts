@@ -1,6 +1,5 @@
 import { createServer as createHttpServer, Server as HttpServer } from 'http';
 import { createServer as createHttpsServer, Server as HttpsServer } from 'https';
-import { parse } from 'url';
 
 import { ServerConfig, Handler, Request, Response } from './interfaces';
 import { routeHandler, staticHandler } from './handlers';
@@ -29,12 +28,13 @@ export class Server {
     }
 
     public handle(request: Request, response: Response): void {
-        const parsedUrl = parse(request.url).pathname;
+        const url = new URL(request.url);
+        const pathname = url.pathname;
         Object.assign(request, {
             app: this,
-            uri: parsedUrl.slice(1, parsedUrl.length),
+            uri: pathname.slice(1, pathname.length),
             params: {},
-            query: {},
+            searchParams: url.searchParams,
         });
         Object.assign(
             response,
