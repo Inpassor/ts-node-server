@@ -29,7 +29,7 @@ export class Server {
     }
 
     public handle(request: Request, response: Response): void {
-        const url = new URL(request.url);
+        const url = new URL(request.url, `http://${request.headers.host}`);
         const pathname = url.pathname;
         Object.assign(request, {
             app: this,
