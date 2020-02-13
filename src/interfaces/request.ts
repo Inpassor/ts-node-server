@@ -6,4 +6,5 @@ export interface Request extends IncomingMessage {
     app: Server;
     uri: string;
     params: { [name: string]: string | number };
+    query: { [name: string]: string };
 }

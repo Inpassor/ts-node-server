@@ -1,5 +1,5 @@
 import { Route, Handler } from '../interfaces';
-import { match } from '../helpers';
+import { match, parseQueryString } from '../helpers';
 
 const methods = [
     'get',
@@ -35,9 +35,11 @@ export const routeHandler: Handler = (request, response, next): void => {
     const findRoute = (): Route => {
         const routes = app.config.routes;
         for (const route of routes) {
-            const params = match(route.path, request.uri);
+            const [path, query] = request.uri.split('?');
+            const params = match(route.path, path);
             if (params) {
                 request.params = params;
+                request.query = parseQueryString(query);
                 return route;
             }
         }

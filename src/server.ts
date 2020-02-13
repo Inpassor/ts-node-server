@@ -33,6 +33,8 @@ export class Server {
         Object.assign(request, {
             app: this,
             uri: parsedUrl.slice(1, parsedUrl.length),
+            params: {},
+            query: {},
         });
         Object.assign(
             response,
