@@ -7,20 +7,21 @@
 A simple HTTP / HTTPS server written in pure node.js without Express.
 
 This library is designed to be minimalistic, quick and powerful at once.
-It includes two built-in middleware functions: **routeHandler** and **staticHandler**.
-They act one after another. First, routeHandler, then staticHandler.
+It includes two built-in middleware functions: **staticHandler** and **routeHandler**.
+They act one after another. First, **staticHandler**, then **routeHandler**.
 You can implement any number of middleware functions. They will be served first.
-
-**routeHandler** serves routes and runs user-implemented Components.
-You can implement any REST method within Component.
-Routes are defined in the **Server** config.
-If URI does not match any route the Server runs **staticHandler**.
 
 **staticHandler** serves static files under a public directory.
 It looks for directories/files by URI. If URI matches an existing directory,
 **staticHandler** looks for an index file within it.
 The library determines a few MIME types by a file extension.
 You can define additional MIME types in the **Server** config.
+
+If URI does not match any public directory/file the Server runs **routeHandler**.
+
+**routeHandler** serves routes and runs user-implemented Components.
+You can implement any REST method within Component.
+Routes are defined in the **Server** config.
 
 ## Installation
 ```bash

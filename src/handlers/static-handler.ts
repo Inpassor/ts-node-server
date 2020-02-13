@@ -3,7 +3,7 @@ import { existsSync, statSync } from 'fs';
 import { Handler } from '../interfaces';
 import { resolvePath } from '../helpers';
 
-export const staticHandler: Handler = (request, response): void => {
+export const staticHandler: Handler = (request, response, next): void => {
     const app = request.app;
     const method = request.method.toLowerCase();
     if (method === 'options') {
@@ -43,5 +43,5 @@ export const staticHandler: Handler = (request, response): void => {
             return response.send(405);
         }
     }
-    response.send(404, `Path /${request.uri} not found`);
+    next();
 };

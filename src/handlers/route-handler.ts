@@ -30,7 +30,7 @@ const methods = [
     'connect',
 ];
 
-export const routeHandler: Handler = (request, response, next): void => {
+export const routeHandler: Handler = (request, response): void => {
     const app = request.app;
     const findRoute = (): Route => {
         const routes = app.config.routes;
@@ -62,5 +62,5 @@ export const routeHandler: Handler = (request, response, next): void => {
             return action.call(component);
         }
     }
-    next();
+    response.send(404, `Path /${request.uri} not found`);
 };

@@ -52,7 +52,7 @@ export class Server {
             },
             ResponseMixin,
         );
-        const handlers = [...this.config.handlers, routeHandler, staticHandler];
+        const handlers = [...this.config.handlers, staticHandler, routeHandler];
         let handler;
         const next = (): void => {
             handler = handlers.shift();
