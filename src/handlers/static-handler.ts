@@ -27,21 +27,5 @@ export const staticHandler: Handler = (request, response, next): void => {
             return response.send(405);
         }
     }
-    if (app.config.routes.length) {
-        const lastRoute = app.config.routes[app.config.routes.length - 1];
-        if (lastRoute.path === '*') {
-            const component = new lastRoute.component(app, request, response);
-            const action = component[method] || component['all'];
-            if (action) {
-                if (lastRoute.headers) {
-                    for (const name in lastRoute.headers) {
-                        response.setHeader(name, lastRoute.headers[name]);
-                    }
-                }
-                return action.call(component);
-            }
-            return response.send(405);
-        }
-    }
     next();
 };
