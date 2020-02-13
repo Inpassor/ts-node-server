@@ -2,6 +2,8 @@ export const match = (pattern: string, string: string): { [key: string]: string 
     const regex = pattern
         .replace(/</g, '(?<')
         .replace(/\(\?<\//g, '/?(?<')
+        .replace(/\|n\?>/g, '>[0-9-_]*)')
+        .replace(/\|l\?>/g, '>[a-zA-Z]*)')
         .replace(/\|\?>/g, '>[a-zA-Z0-9-_]*)')
         .replace(/\|n>/g, '>[0-9]+)')
         .replace(/\|l>/g, '>[a-zA-Z]+)')
