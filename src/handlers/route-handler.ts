@@ -35,6 +35,9 @@ export const routeHandler: Handler = (request, response, next): void => {
     const findRoute = (): Route => {
         const routes = app.config.routes;
         for (const route of routes) {
+            if (route.path.match(/^\*+$/)) {
+                return route;
+            }
             const params = match(route.path, request.uri);
             if (params) {
                 request.params = params;
