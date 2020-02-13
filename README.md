@@ -91,16 +91,42 @@ If config is omitted default options are used.
     **Route** is an object:
     ```
     {
-        path: string | RegExp | (string | RegExp)[];
+        path: string;
         component: typeof Component;
         headers?: { [name: string]: string };
     }
     ```
 
-    - ```path: string | RegExp | (string | RegExp)[]``` - can be string, Regex
-        or array of string / Regex (see
-        [path-to-regexp](https://github.com/pillarjs/path-to-regexp#match)
-        Match documentation).
+    - ```path: string``` - A path pattern. You can specify named path parameters
+        by enclosing parameters names in ```<...>```.
+
+        For example: the path pattern ```'shop/<category>/<item>'``` matches the route
+        ```shop/audio/speakers-101```. In this case there will be two path parameters:
+        ```typescript
+        {
+            category: 'audio',
+            item: 'speakers-101',
+        }
+        ```
+
+        By default value of named path parameter can be any set of these symbols:
+        **a-zA-Z0-9-_**.
+
+        You can specify path parameter type by adding to its name **'|n'** (for numbers)
+        or **'|l'** (for letters).
+
+        Example:
+
+        ```<id|n>``` - named parameter "id" expected to consist of numbers (**0-9**);
+
+        ```<category|l>``` - named parameter "category" expected to consist of latin letters (**a-zA-Z**).
+
+        A last named path parameter can be non-obligatory. In this case, we need
+        to "hide" the last slash inside the name and add **|?**: ```</...|?>```.
+        For example: ```'shop/<category></item|?>'```
+
+        You can also specify a type of a non-obligatory last named path parameter: ```</...|l?>```
+        or ```</...|n?>```
 
         You can use "magic" path: **'\*'**, which matches any route.
         A **Route** with this path should be defined after all the routes.
@@ -189,9 +215,7 @@ Current route URI.
 #### Request.params [property]
 ```params: { [name: string]: string }```
 
-A route parameters list parsed by
-[path-to-regexp](https://github.com/pillarjs/path-to-regexp#match)
-Match function.
+A named route parameters list.
 
 ### Response [class]
 
