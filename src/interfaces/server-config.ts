@@ -17,4 +17,5 @@ export interface ServerConfig {
     handlers?: Handler[];
     routes?: Route[];
     renderers?: { [extension: string]: RenderFunction };
+    maxBodySize?: number;
 }

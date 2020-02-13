@@ -23,6 +23,7 @@ export class Server {
             handlers: [],
             routes: [],
             renderers: {},
+            maxBodySize: 2097152, // 2Mb
             ...this.config,
         };
     }
@@ -35,6 +36,13 @@ export class Server {
             uri: pathname.slice(1, pathname.length),
             params: {},
             searchParams: url.searchParams,
+            body: '',
+        });
+        request.on('data', data => {
+            request.body += data;
+            if (request.body.length > this.config.maxBodySize) {
+                request.connection.destroy();
+            }
         });
         Object.assign(
             response,

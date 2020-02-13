@@ -7,4 +7,5 @@ export interface Request extends IncomingMessage {
     uri: string;
     params: { [name: string]: string | number };
     searchParams: URLSearchParams;
+    body: string;
 }
