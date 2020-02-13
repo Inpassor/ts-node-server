@@ -150,6 +150,7 @@ If config is omitted default options are used.
         data to be used by a render function.
 
     Returns string - a result of render function to be sent to a client.
+- ```maxBodySize: number``` (default: **2097152** - 2Mb) - maximum size of Request body.
 
 #### Server.run [method]
 ```run: () => HttpServer | HttpsServer```
@@ -216,6 +217,12 @@ Current route URI.
 ```params: { [name: string]: string }```
 
 A named route parameters list.
+
+#### Request.searchParams [property]
+```searchParams: URLSearchParams```
+
+#### Request.body [property]
+```body: string```
 
 ### Response [class]
 
