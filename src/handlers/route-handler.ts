@@ -1,6 +1,5 @@
-import { match } from 'path-to-regexp';
-
 import { Route, Handler } from '../interfaces';
+import { match } from '../helpers';
 
 const methods = [
     'get',
@@ -36,14 +35,11 @@ export const routeHandler: Handler = (request, response, next): void => {
     const findRoute = (): Route => {
         const routes = app.config.routes;
         for (const route of routes) {
-            try {
-                const matchFunction = match(route.path, { encode: encodeURI, decode: decodeURIComponent });
-                const matchResult = matchFunction(request.uri);
-                if (matchResult) {
-                    request.params = { ...matchResult.params };
-                    return route;
-                }
-            } catch {}
+            const params = match(route.path, request.uri);
+            if (params) {
+                request.params = params;
+                return route;
+            }
         }
     };
     const method = request.method.toLowerCase();

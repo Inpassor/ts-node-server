@@ -31,21 +31,19 @@
         "release-patch": "npm run build && npm version patch -m \"%s\" && npm run push-tags && npm publish"
     },
     "main": "lib/index.js",
-    "dependencies": {
-        "path-to-regexp": "^6.1.0"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@inpassor/prettier-config": "^0.1.1",
-        "@types/node": "^12.12.26",
-        "@typescript-eslint/eslint-plugin": "^2.19.0",
-        "@typescript-eslint/parser": "^2.19.0",
+        "@types/node": "^12.12.27",
+        "@typescript-eslint/eslint-plugin": "^2.19.2",
+        "@typescript-eslint/parser": "^2.19.2",
         "eslint": "^6.8.0",
         "eslint-config-prettier": "^6.10.0",
         "eslint-plugin-prettier": "^3.1.2",
-        "husky": "^4.2.1",
+        "husky": "^4.2.3",
         "lint-staged": "^10.0.7",
         "prettier": "^1.19.1",
-        "rimraf": "^3.0.1",
+        "rimraf": "^3.0.2",
         "typescript": "3.5.3"
     },
     "husky": {
