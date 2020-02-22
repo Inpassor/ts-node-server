@@ -397,7 +397,7 @@ const config: ServerConfig = {
         // (you can also call Server.use method to add middleware after Server instance created)
     routes: [ // routes to be served by routeHandler
         {
-            path: 'demo/:arg?',
+            path: 'demo</arg|?>',
             component: DemoComponent,
         },
         {
