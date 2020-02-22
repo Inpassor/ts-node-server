@@ -3,7 +3,8 @@ import { ServerOptions as HttpsServerOptions } from 'https';
 
 import { Handler } from './handler';
 import { Route } from './route';
-import { RenderFunction } from './render-function';
+import { Renderer } from './renderer';
+import { BodyParser } from './body-parser';
 
 export interface ServerConfig {
     protocol?: 'http' | 'https';
@@ -16,6 +17,7 @@ export interface ServerConfig {
     sameOrigin?: boolean;
     handlers?: Handler[];
     routes?: Route[];
-    renderers?: { [extension: string]: RenderFunction };
+    renderers?: { [extension: string]: Renderer };
+    bodyParsers?: { [mimeType: string]: BodyParser };
     maxBodySize?: number;
 }

@@ -3,7 +3,7 @@ import { createServer as createHttpsServer, Server as HttpsServer } from 'https'
 
 import { ServerConfig, Handler, Request, Response } from './interfaces';
 import { routeHandler, staticHandler } from './handlers';
-import { ResponseMixin, Logger } from './helpers';
+import { ResponseMixin, formatBytes, Logger } from './helpers';
 
 export class Server {
     constructor(public config: ServerConfig = {}) {
@@ -23,12 +23,16 @@ export class Server {
             handlers: [],
             routes: [],
             renderers: {},
+            bodyParsers: {
+                'application/json': JSON.parse,
+            },
             maxBodySize: 2097152, // 2Mb
             ...this.config,
         };
     }
 
     public handle(request: Request, response: Response): void {
+        let hasError = false;
         const url = new URL(request.url, `http://${request.headers.host}`);
         const pathname = url.pathname;
         Object.assign(request, {
@@ -41,7 +45,11 @@ export class Server {
         request.on('data', data => {
             request.body += data;
             if (request.body.length > this.config.maxBodySize) {
-                request.connection.destroy();
+                hasError = true;
+                response.sendError({
+                    code: 400,
+                    message: `Request body too large (max ${formatBytes(this.config.maxBodySize)}).`,
+                });
             }
         });
         Object.assign(
@@ -58,7 +66,17 @@ export class Server {
             handler = handlers.shift();
             handler(request, response, next);
         };
-        next();
+        request.on('end', () => {
+            if (!hasError) {
+                if (request.body) {
+                    const bodyParser = this.config.bodyParsers[request.headers['content-type']];
+                    if (bodyParser) {
+                        request.body = bodyParser(request.body);
+                    }
+                }
+                next();
+            }
+        });
     }
 
     public run(): HttpServer | HttpsServer {

@@ -11,11 +11,11 @@ export const staticHandler: Handler = (request, response, next): void => {
     }
     let pathName = resolvePath(app.config.publicPath, request.uri);
     if (existsSync(pathName)) {
-        const isDirectory = statSync(pathName).isDirectory();
-        if (isDirectory) {
-            pathName = resolvePath(pathName, app.config.index);
-        }
         if (method === 'get') {
+            const isDirectory = statSync(pathName).isDirectory();
+            if (isDirectory) {
+                pathName = resolvePath(pathName, app.config.index);
+            }
             try {
                 return response.renderFile(pathName);
             } catch {

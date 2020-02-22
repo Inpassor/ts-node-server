@@ -134,7 +134,7 @@ If config is omitted default options are used.
     - ```component: typeof Component``` - A derivative class of **Component**.
     - ```headers: { [name: string]: string }``` (default: **{}**) - Additional headers
         for this route.
-- ```renderers: { [extension: string]: RenderFunction }``` (default: **{}**) - list of
+- ```renderers: { [extension: string]: Renderer }``` (default: **{}**) - list of
     render functions by extension. For example:
     ```
     {
@@ -142,8 +142,8 @@ If config is omitted default options are used.
     }
     ```
 
-    **RenderFunction** is a function
-    ```(template: string, params?: { [key: string]: any }): string```.
+    **Renderer** is a function
+    ```(template: string, params?: { [key: string]: any }) => string```.
 
     It accepts one or two arguments:
     - ```template: string``` - A template string.
@@ -151,6 +151,17 @@ If config is omitted default options are used.
         data to be used by a render function.
 
     Returns string - a result of render function to be sent to a client.
+- ```bodyParsers: { [mimeType: string]: BodyParser }```
+    (default: **{ 'application/json': JSON.parse }**) - list of parser functions
+    by MIME type.
+
+    **BodyParser** is a function
+    ```(body: string) => any```
+
+    It accepts one argument:
+    - ```body: string``` - Request body.
+
+    Returns parsed body and stores it to **Request.body**.
 - ```maxBodySize: number``` (default: **2097152** - 2Mb) - maximum size of Request body.
 
 #### Server.run [method]
@@ -223,7 +234,10 @@ A named route parameters list.
 ```searchParams: URLSearchParams```
 
 #### Request.body [property]
-```body: string```
+```body: any```
+
+A body of the request. Is parsed by **BodyParser** function if **bodyParsers** config
+option contain key equal to **Content-Type** request header.
 
 ### Response [class]
 
@@ -296,6 +310,9 @@ Accepts one or two arguments:
 ### Helpers
 
 The library has a few helper functions:
+
+#### formatBytes [function]
+```formatBytes: (bytes: number, decimals = 2) => string```
 
 #### getCodeFromError [function]
 ```getCodeFromError: (error) => number```

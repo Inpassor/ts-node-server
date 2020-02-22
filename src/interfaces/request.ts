@@ -7,5 +7,6 @@ export interface Request extends IncomingMessage {
     uri: string;
     params: { [name: string]: string | number };
     searchParams: URLSearchParams;
-    body: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body: any;
 }

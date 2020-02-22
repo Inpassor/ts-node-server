@@ -1,5 +1,3 @@
 import { resolve } from 'path';
 
-export const resolvePath = (...pathSegments): string => {
-    return resolve(...[].concat(...pathSegments));
-};
+export const resolvePath = (...pathSegments): string => resolve(...[].concat(...pathSegments));

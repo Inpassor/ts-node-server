@@ -11,6 +11,8 @@ export const isServerConfig = (arg): arg is ServerConfig => {
         arg.headers ||
         (arg.handlers && arg.handlers.length) ||
         (arg.routes && arg.routes.length) ||
-        arg.renderers
+        arg.renderers ||
+        arg.bodyParsers ||
+        arg.maxBodySize
     );
 };

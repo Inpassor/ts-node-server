@@ -1,3 +1,4 @@
+export * from './format-bytes';
 export * from './get-code-from-error';
 export * from './get-message-from-error';
 export * from './http-status-list';
