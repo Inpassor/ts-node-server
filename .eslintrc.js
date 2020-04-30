@@ -13,6 +13,9 @@ module.exports = {
         ecmaVersion: 2020,
         sourceType: 'module',  // Allows for the use of imports
     },
+    ignorePatterns: [
+        'node_modules/'
+    ],
     rules: {
         // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
         // e.g. '@typescript-eslint/explicit-function-return-type': 'off',
