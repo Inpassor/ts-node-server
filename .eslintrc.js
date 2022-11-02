@@ -1,48 +1,65 @@
 'use strict';
 
 module.exports = {
-    env: {
-        node: true,
-        browser: true,
-    },
-    extends: [
-        'eslint:recommended',
-        'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
-    ],
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',  // Allows for the use of imports
-    },
-    rules: {
-        // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-        // e.g. '@typescript-eslint/explicit-function-return-type': 'off',
-        'no-empty': 'off',
-        'no-prototype-builtins': 'off',
-    },
-    overrides: [
-        {
-            files: ['*.ts'],
-            parser: '@typescript-eslint/parser',
-            parserOptions: {
-                ecmaVersion: 2020,
-                project: 'tsconfig.json',
-                sourceType: 'module',  // Allows for the use of imports
-            },
-            extends: [
-                'eslint:recommended',
-                'plugin:@typescript-eslint/eslint-recommended',
-                'plugin:@typescript-eslint/recommended',
-                'prettier/@typescript-eslint', // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
-                'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
-            ],
-            rules: {
-                // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-                // e.g. '@typescript-eslint/explicit-function-return-type': 'off',
-                'no-empty': 'off',
-                'no-prototype-builtins': 'off',
-                '@typescript-eslint/no-empty-function': 'off',
-                '@typescript-eslint/no-unused-vars': 'off',
-            },
-        },
-    ]
+  // https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy
+  // This option interrupts the configuration hierarchy at this file
+  // Remove this if you have an higher level ESLint config file (it usually happens into a monorepos)
+  root: true,
+
+  parserOptions: {
+    parser: require.resolve('@typescript-eslint/parser'),
+  },
+
+  env: {
+    node: true,
+    browser: true,
+    es2021: true,
+  },
+
+  extends: [
+    // Base ESLint recommended rules
+    // 'eslint:recommended',
+
+    // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin#usage
+    // ESLint typescript rules
+    'plugin:@typescript-eslint/recommended',
+
+    // https://github.com/prettier/eslint-config-prettier#installation
+    // usage with Prettier, provided by 'eslint-config-prettier'.
+    'prettier',
+  ],
+
+  plugins: [
+    // required to apply rules which need type information
+    '@typescript-eslint',
+
+    // https://github.com/typescript-eslint/typescript-eslint/issues/389#issuecomment-509292674
+    // Prettier has not been included as plugin to avoid performance impact
+    // add it as an extension for your IDE
+  ],
+
+  globals: {
+    ga: 'readonly', // Google Analytics
+    process: 'readonly',
+    chrome: 'readonly',
+  },
+
+  rules: {
+    'prefer-promise-reject-errors': 'off',
+
+    quotes: ['warn', 'single', { avoidEscape: true }],
+
+    // this rule, if on, would require explicit return type on the `render` function
+    '@typescript-eslint/explicit-function-return-type': 'off',
+
+    // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
+    '@typescript-eslint/no-var-requires': 'off',
+
+    // The core 'no-unused-vars' rules (in the eslint:recommended ruleset)
+    // does not work with type definitions
+    'no-unused-vars': 'off',
+
+    // allow debugger during development only
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+  },
 };

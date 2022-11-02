@@ -1,57 +1,46 @@
 {
-    "name": "@inpassor/node-server",
-    "version": "0.1.20",
-    "license": "MIT",
-    "author": "Oleg V. Kuzmin",
-    "description": "Simple node.js HTTP / HTTPS server",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Inpassor/ts-node-server"
-    },
-    "bugs": {
-        "url": "https://github.com/Inpassor/ts-node-server/issues"
-    },
-    "homepage": "https://github.com/Inpassor/ts-node-server",
-    "keywords": [
-        "simple",
-        "node.js",
-        "node",
-        "http",
-        "https",
-        "server"
-    ],
-    "scripts": {
-        "up": "npm up && npm audit fix",
-        "lint": "eslint src/**/*.ts",
-        "clean": "rimraf ./lib",
-        "build": "npm run lint && npm run clean && tsc",
-        "push-tags": "git push && git push --tags",
-        "release-major": "npm run build && npm version major -m \"%s\" && npm run push-tags && npm publish",
-        "release-minor": "npm run build && npm version minor -m \"%s\" && npm run push-tags && npm publish",
-        "release-patch": "npm run build && npm version patch -m \"%s\" && npm run push-tags && npm publish"
-    },
-    "main": "lib/index.js",
-    "dependencies": {},
-    "devDependencies": {
-        "@inpassor/prettier-config": "^0.1.1",
-        "@types/node": "^12.12.37",
-        "@typescript-eslint/eslint-plugin": "^2.30.0",
-        "@typescript-eslint/parser": "^2.30.0",
-        "eslint": "^6.8.0",
-        "eslint-config-prettier": "^6.11.0",
-        "eslint-plugin-prettier": "^3.1.3",
-        "husky": "^4.2.5",
-        "lint-staged": "^10.2.1",
-        "prettier": "^1.19.1",
-        "rimraf": "^3.0.2",
-        "typescript": "^3.8.3"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "*.ts": "eslint src/**/*.ts --fix"
-    }
+  "name": "@inpassor/node-server",
+  "version": "0.1.20",
+  "license": "MIT",
+  "author": "Oleg V. Kuzmin <inpassor@yandex.com>",
+  "description": "Simple node.js HTTP / HTTPS server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Inpassor/ts-node-server"
+  },
+  "bugs": {
+    "url": "https://github.com/Inpassor/ts-node-server/issues"
+  },
+  "homepage": "https://github.com/Inpassor/ts-node-server",
+  "keywords": [
+    "simple",
+    "node.js",
+    "node",
+    "http",
+    "https",
+    "server"
+  ],
+  "scripts": {
+    "up": "npm up && npm audit fix",
+    "lint": "eslint --ext .js,.ts ./",
+    "format": "prettier --write \"**/*.{js,ts,scss,html,md,json}\" --ignore-path .gitignore",
+    "clean": "rimraf ./lib",
+    "build": "npm run lint && npm run clean && tsc",
+    "push-tags": "git push && git push --tags",
+    "release-major": "npm run build && npm version major -m \"%s\" && npm run push-tags && npm publish",
+    "release-minor": "npm run build && npm version minor -m \"%s\" && npm run push-tags && npm publish",
+    "release-patch": "npm run build && npm version patch -m \"%s\" && npm run push-tags && npm publish"
+  },
+  "main": "lib/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.8.4"
+  }
 }

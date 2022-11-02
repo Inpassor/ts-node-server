@@ -1,6 +1,8 @@
 'use strict';
 
 module.exports = {
-    ...require('@inpassor/prettier-config'),
-    // Add project-specific prettier configuration here
+  singleQuote: true,
+  semi: true,
+
+  // Add project-specific prettier configuration here
 };

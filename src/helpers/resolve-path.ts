@@ -1,3 +1,4 @@
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 
-export const resolvePath = (...pathSegments): string => resolve(...[].concat(...pathSegments));
+export const resolvePath = (...pathSegments: (string | string[])[]): string =>
+  resolve(...[].concat(...pathSegments));

@@ -7,17 +7,17 @@ import { Renderer } from './renderer';
 import { BodyParser } from './body-parser';
 
 export interface ServerConfig {
-    protocol?: 'http' | 'https';
-    port?: number;
-    options?: HttpServerOptions | HttpsServerOptions;
-    publicPath?: string | string[];
-    index?: string;
-    mimeTypes?: { [extension: string]: string };
-    headers?: { [name: string]: string };
-    sameOrigin?: boolean;
-    handlers?: Handler[];
-    routes?: Route[];
-    renderers?: { [extension: string]: Renderer };
-    bodyParsers?: { [mimeType: string]: BodyParser };
-    maxBodySize?: number;
+  protocol?: 'http' | 'https';
+  port?: number;
+  options?: HttpServerOptions | HttpsServerOptions;
+  publicPath?: string | string[];
+  index?: string;
+  mimeTypes?: Record<string, string>;
+  headers?: Record<string, string>;
+  sameOrigin?: boolean;
+  handlers?: Handler[];
+  routes?: Route[];
+  renderers?: Record<string, Renderer>;
+  bodyParsers?: Record<string, BodyParser>;
+  maxBodySize?: number;
 }
